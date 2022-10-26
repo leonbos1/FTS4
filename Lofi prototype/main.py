@@ -1,9 +1,9 @@
 from hcsr04 import HCSR04
 from time import sleep
-import requests
+import urequests
+import json
 
 def main():	
-    
     do_connect()
     # ESP32
     sensor = HCSR04(trigger_pin=5, echo_pin=18, echo_timeout_us=10000)
@@ -23,23 +23,28 @@ def do_connect():
     wlan.active(True)
     if not wlan.isconnected():
         print('connecting to network...')
-        wlan.connect('Covid19 5G Afluistermast', 'Kaaskaas123')
+        wlan.connect('kaas', '12121212')
         while not wlan.isconnected():
             pass
     print('network config:', wlan.ifconfig())
 
 def post_data(distance):
-    url = "http://192.168.178.69:2000/distance"
-    payload = distance
-    headers = {
-        'Content-Type': "application/json"
+    url = "http://ronleon.nl:2000/distance"
+    payload = {
+        'distance':distance
         }
-    response = requests.request("POST", url, data=payload, headers=headers)
+    payload = json.dumps(payload)
+    
+    response = urequests.post(url,data=payload)
+
     print(response.text)
 
     
 if __name__ == "__main__":
     main()
+
     
-    
+
+
+
 
