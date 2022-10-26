@@ -20,15 +20,19 @@ class DistanceModel(db.Model):
     __tablename__ = 'distance'
     id = db.Column(db.Integer, primary_key=True)
     distance = db.Column(db.Integer)
+    sound = db.Column(db.Integer)
     date = db.Column(db.String)
     time = db.Column(db.String)
 
 DistanceModelMarshal = {
     'id': fields.Integer,
     'distance': fields.Integer,
+    'sound': fields.Integer,
     'date': fields.String,
     'time': fields.String
 }
+
+
 
 
 class Distance(Resource):
@@ -46,12 +50,14 @@ class Distance(Resource):
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         time = datetime.datetime.now().strftime("%H:%M:%S")
 
-        distance = DistanceModel()
-        distance.distance = data['distance']
-        distance.date = date
-        distance.time = time
 
-        db.session.add(distance)
+        distancemodel = DistanceModel()
+        distancemodel.distance = data['distance']
+        distancemodel.sound = data['sound']
+        distancemodel.date = date
+        distancemodel.time = time
+        
+        db.session.add(distancemodel)
         db.session.commit()
 
 

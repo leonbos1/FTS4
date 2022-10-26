@@ -33,7 +33,8 @@ import Chart from "chart.js/auto";
         drawGraph() {
             const ctx = document.getElementById('graph').getContext('2d');
 
-            const data = this.data.distance
+            const activitydata = this.data.distance
+            const sounddata = this.data.sound
             const labels = this.data.time
 
             const myChart = new Chart(ctx, {
@@ -42,7 +43,7 @@ import Chart from "chart.js/auto";
                     labels: labels,
                     datasets: [{
                         label: 'Activity',
-                        data: data,
+                        data: activitydata,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                         ],
@@ -50,7 +51,20 @@ import Chart from "chart.js/auto";
                             'rgba(255, 99, 132, 1)',
                         ],
                         borderWidth: 1
-                    }]
+                    },
+                    {
+                        label: "Sound",
+                        data: sounddata,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1
+                    }
+                
+                ]
                 },
                 options: {
                     scales: {
@@ -66,13 +80,16 @@ import Chart from "chart.js/auto";
             
             this.data.distance = this.data.map((item) => {
                 if (item.distance < 100) {
-                    return 0
+                    return 500
                 } else {
-                    return 1
+                    return 0
                 }
             })
             this.data.time = this.data.map((item) => {
                 return item.time
+            })
+            this.data.sound = this.data.map((item) => {
+                return item.sound
             })
         }
     },
