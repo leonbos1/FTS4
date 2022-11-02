@@ -77,9 +77,19 @@ import Chart from "chart.js/auto";
             myChart
         },
         mapData() {
+            //average of last 20 distances
+            /*
+            let hallwaywidth;
+            for (let i = 0; i < 50; i++) {
+                hallwaywidth += this.data.distance[i]
+            }
+            hallwaywidth = hallwaywidth / 50
+            console.log(hallwaywidth)
+            */
+            
             
             this.data.distance = this.data.map((item) => {
-                if (item.distance < 100) {
+                if (item.distance < 40) {
                     return 500
                 } else {
                     return 0

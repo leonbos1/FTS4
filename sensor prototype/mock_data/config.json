@@ -1,0 +1,20 @@
+{
+    "speed": 100, 
+    "amount_of_people": 100,
+    "heartrate": true, 
+    "adrenaline_levels": true,
+    "mood": true,
+    "body_temperature": true,
+    "blood_pressure": true,
+    "amount_of_people_per_room": true,
+    "rooms" : [
+        {
+            "name" : "ZE10/209",
+            "capacity" : 32
+        },
+        {
+            "name":"ZE10/238a",
+            "capacity":18
+        }
+    ] 
+}

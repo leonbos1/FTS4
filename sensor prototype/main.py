@@ -37,7 +37,7 @@ def do_connect():
     print('network config:', wlan.ifconfig())
 
 def post_data(obj):
-    url = "http://ronleon.nl:2000/distance"
+    url = "http://ronleon:2000/distance"
 
     payload = json.dumps(obj)
     

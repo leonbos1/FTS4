@@ -32,9 +32,6 @@ DistanceModelMarshal = {
     'time': fields.String
 }
 
-
-
-
 class Distance(Resource):
 
     @marshal_with(DistanceModelMarshal)
@@ -59,7 +56,6 @@ class Distance(Resource):
         
         db.session.add(distancemodel)
         db.session.commit()
-
 
         return {
             'data': data
