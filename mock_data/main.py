@@ -17,6 +17,9 @@ class MockData:
         self.people = self.init_people()
 
     def init_people(self):
+        """
+        Initializes the people
+        """
         first_names = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Charles", "Joseph", "Thomas", "Christopher", "Daniel", "Paul", "Mark", "Donald", "George", "Kenneth", "Steven", "Edward", "Brian", "Ronald", "Anthony", "Kevin", "Jason", "Matthew", "Gary", "Timothy", "Jose", "Larry", "Jeffrey", "Frank", "Scott", "Eric", "Stephen", "Andrew", "Raymond", "Gregory", "Joshua", "Jerry", "Dennis", "Walter", "Patrick", "Peter", "Harold", "Douglas", "Henry", "Carl", "Arthur", "Ryan", "Roger"]
         last_names = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin", "Thompson", "Garcia", "Martinez", "Robinson", "Clark", "Rodriguez", "Lewis", "Lee", "Walker", "Hall", "Allen", "Young", "Hernandez", "King", "Wright", "Lopez", "Hill", "Scott", "Green", "Adams", "Baker", "Gonzalez", "Nelson", "Carter", "Mitchell", "Perez", "Roberts", "Turner", "Phillips", "Campbell", "Parker", "Evans", "Edwards", "Collins"]
         people = []
@@ -30,6 +33,9 @@ class MockData:
         return people
 
     def init_rooms(self):
+        """
+        Initializes the rooms
+        """
         rooms_json = json.load(open('rooms.json'))["rooms"]
         rooms = []
         for room in rooms_json:
@@ -56,23 +62,17 @@ class Person:
     def __init__(self, name, age):
         self.name = name
         self.age = age
+        self.heart_rate = 0
+        self.adrenaline_level = 0
+        self.mood = 0
+        self.body_temperature = 0
+        self.blood_pressure = 0
 
-    def set_heart_rate(self, heart_rate):
-        self.heart_rate = heart_rate
-
-    def set_adrenaline_levels(self, adrenaline_levels):
-        self.adrenaline_levels = adrenaline_levels
-
-    def set_mood(self, mood):
-        self.mood = mood
-
-    def set_body_temperature(self, body_temperature):
-        self.body_temperature = body_temperature
-
-    def set_blood_pressure(self, blood_pressure):
-        self.blood_pressure = blood_pressure
 
     def print_person(self):
+        """
+        Prints the person's data
+        """
         for key, value in self.__dict__.items():
             print(key, value)
 
@@ -83,6 +83,9 @@ class Room:
         self.people = []
 
     def add_person(self, person):
+        """
+        Adds a person to the room
+        """
         if len(self.people) < self.capacity:
             self.people.append(person)
             return True
@@ -90,9 +93,15 @@ class Room:
             return False
 
     def get_people(self):
+        """
+        Returns the people in the room
+        """
         return self.people
 
     def get_person_with_higher_heart_rate(self):
+        """
+        Returns the person with the highest heart rate    
+        """
         person = self.people[0]
         for p in self.people:
             if p.heart_rate > person.heart_rate:
