@@ -23,7 +23,7 @@ import Chart from "chart.js/auto";
 
     methods: {
         getData() {
-            fetch("http://82.72.126.62:2000/distance")
+            fetch("http://127.0.0.1:2000/distance")
             .then(response => response.json())
             .then(data => this.data = data)
             .then(() => this.mapData())

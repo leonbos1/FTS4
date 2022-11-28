@@ -1,17 +1,20 @@
 <template>
-  <div>
-    <Graph/>
+
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link>
+      <router-link to="/graph">Graph</router-link> 
+    </div>
+    <router-view/>
   </div>
+
 </template>
 
 <script>
 
-import Graph from './components/graph.vue'
-
 export default {
   name: 'App',
   components: {
-    Graph
   }
 }
 </script>
