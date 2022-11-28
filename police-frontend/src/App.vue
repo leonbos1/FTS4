@@ -6,6 +6,8 @@
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/graph">Graph</router-link></li>
         <li><router-link to="/manage-sensors">Manage Sensors</router-link></li>
+        <li><router-link to="/control-panel">Control panel</router-link></li>
+
       </ul>
     </div>
     <router-view/>
