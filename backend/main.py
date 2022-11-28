@@ -1,5 +1,6 @@
 from hcsr04 import HCSR04
 from time import sleep
+from machine import Pin, ADC
 import urequests
 import json
 
@@ -7,14 +8,21 @@ def main():
     do_connect()
     # ESP32
     sensor = HCSR04(trigger_pin=5, echo_pin=18, echo_timeout_us=10000)
-
-    # ESP8266
-    #sensor = HCSR04(trigger_pin=12, echo_pin=14, echo_timeout_us=10000)
+    sound = ADC(Pin(34))
+    sound.atten(ADC.ATTN_11DB)
+    sound.width(ADC.WIDTH_12BIT)
 
     while True:
         distance = sensor.distance_cm()
         print('Distance:', distance, 'cm')
-        post_data(distance)
+        soundread = sound.read()
+        print('Sound:', soundread)
+
+        object = {
+            'distance': distance,
+            'sound': soundread
+        }
+        post_data(object)
         sleep(1)
     
 def do_connect():
@@ -28,12 +36,10 @@ def do_connect():
             pass
     print('network config:', wlan.ifconfig())
 
-def post_data(distance):
-    url = "http://ronleon.nl:2000/distance"
-    payload = {
-        'distance':distance
-        }
-    payload = json.dumps(payload)
+def post_data(obj):
+    url = "http://ronleon:2000/distance"
+
+    payload = json.dumps(obj)
     
     response = urequests.post(url,data=payload)
 
@@ -44,6 +50,8 @@ if __name__ == "__main__":
     main()
 
     
+
+
 
 
 
