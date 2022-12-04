@@ -4,6 +4,7 @@
       <tr>
         <th>ID</th>
         <th>Location</th>
+        <th></th>
       </tr>
       <tr v-for="room in rooms" v-bind:key="room.id">
         <td>{{ room.id }}</td>
@@ -14,7 +15,7 @@
       <tr>
         <td></td>
         <td><input v-model="newRoom.location" /></td>
-        <button v-on:click="addRoom()">Add</button>
+        <button class="add" v-on:click="addRoom()">Add</button>
       </tr>
     </table>
   </div>
@@ -86,4 +87,32 @@ export default {
 </script>
 
 <style>
+
+.add {
+    background-color: #0011ff;
+    color: white;
+    padding: 5px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: 5vw;
+    border: none;
+    border-radius: 4px;
+}
+
+input {
+    width: 6vw;
+    padding: 5px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+p {
+    font-size: 1.5vw;
+}
+
+
+
 </style>
