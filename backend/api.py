@@ -38,7 +38,8 @@ class Distance(Resource):
     def get(self):
         #where today
         date = datetime.datetime.now().strftime("%Y-%m-%d")
-        distance = DistanceModel.query.filter_by(date=date).all()
+        #distance = DistanceModel.query.filter_by(date=date).all()
+        distance = DistanceModel.query.all()
         return distance
 
     def post(self):
@@ -66,4 +67,4 @@ api.add_resource(Distance, '/distance')
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="192.168.178.69",port=2000, debug=True)
+    app.run(port=2000, debug=True)
