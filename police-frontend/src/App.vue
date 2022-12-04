@@ -6,11 +6,15 @@
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/graph">Graph</router-link></li>
         <li><router-link to="/manage-sensors">Manage Sensors</router-link></li>
+        <li><router-link to="/manage-rooms">Manage Rooms</router-link></li>
         <li><router-link to="/control-panel">Control panel</router-link></li>
+        <li><router-link to="/demo">Demo</router-link></li>
 
       </ul>
     </div>
+    <div class="container">
     <router-view/>
+    </div>
   </div>
 
 </template>
@@ -70,6 +74,16 @@ div .nav {
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  padding: 16px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
 }
 
 </style>
