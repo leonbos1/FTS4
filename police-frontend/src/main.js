@@ -5,6 +5,7 @@ import Home from './components/home.vue'
 import ManageSensors from './components/manageSensors.vue'
 import ControlPanel from './components/controlPanel.vue'
 import ManageRooms from './components/manageRooms.vue'
+import Demo from './components/Demo.vue'
 import { createRouter, createWebHistory } from 'vue-router' 
 
 const routes = [
@@ -13,6 +14,7 @@ const routes = [
     { path: '/manage-sensors', component: ManageSensors },
     { path: '/control-panel', component: ControlPanel },
     { path: '/manage-rooms', component: ManageRooms },
+    { path: '/demo', component: Demo },
 ]
 
 const router = createRouter({
