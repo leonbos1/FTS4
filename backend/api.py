@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_restful import Resource, Api, marshal_with, fields, reqparse
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +10,7 @@ import datetime
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
+#, supports_credentials=True
 CORS(app, resources={r"/*": {"origins": "*"}})
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.db')
@@ -71,6 +72,28 @@ SensorModelMarshal = {
     'room_id': fields.Integer
 }
 
+class testModel(db.Model):
+    
+    __tablename__ = 'test'
+    test = db.Column(db.String, primary_key=True)
+
+TestModelMarshal = {
+    'test': fields.String
+}
+
+@app.route("/demo", methods=["POST"])
+def demo():
+    input_json = request.get_json(force=True)
+    test = input_json['test']
+    data = testModel(
+        test=test
+    )
+    db.session.add(data)
+    db.session.commit()
+    return 'succes', 200
+
+#get request laatse endpoint opsturen
+
 class Measurement(Resource):
 
 
@@ -82,17 +105,9 @@ class Measurement(Resource):
         distance = MeasurementModel.query.all()
         return distance
 
-    # def put(self, id):
-    #     #todo put afmaken 
-    #     args = distance.put
-    #     distance = DistanceModel(id=id, )
-        
-    #     return
-
     @marshal_with(MeasurementModelMarshal)
     def post(self):
         data = request.get_json(force=True)
-        print(data)
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         time = datetime.datetime.now().strftime("%H:%M:%S")
 

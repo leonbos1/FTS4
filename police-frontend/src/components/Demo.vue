@@ -1,36 +1,39 @@
 <template>
-  <div class="content">
-    <h3>Set text in Unity scene</h3>
-    <input type="text" v-model="textInput"/>
-    <button v-on:click="setText">Set</button>
-  </div>
+    <div class="content">
+      <label for="postText">type text for demo</label>
+      <input type="text" id ="postText" v-model="postText"/>
+      <button v-on:click="test()">Set</button>
+    </div>
 </template>
   
-  <script>
+<script>
 export default {
-  name: "DemoPage",
-  components: {},
-
-  data: function () {
-    return {
-      textInput: "",
-    };
+  name: 'CreatePost',
+  data(){
+    return{
+      formData:{
+        postText:''
+      },
+    }
   },
-
-  methods: {
-    setText() {
-      fetch("http://localhost:2000/demo", {
-        method: "POST",
+  methods:{
+    test(){
+      // cors error
+      fetch("http://127.0.0.1:2000/demo", {
+        method: "post",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: this.textInput }),
+        body: JSON.stringify({
+          test:this.postText,
+        })
       })
-        .then((response) => response.json())
-    },
-  },
-  mounted() {},
-};
+
+    }
+  }
+
+}
+
 </script>
   
   <style scoped>
