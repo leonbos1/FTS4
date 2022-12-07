@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Manage Sensors</h1>
     <table>
       <tr>
         <th>ID</th>
@@ -18,8 +19,8 @@
           </select>
         </td>
 
-        <button v-on:click="editSensor(sensor.id)">Edit</button>
-        <button v-on:click="deleteSensor(sensor.id)">Delete</button>
+        <button class="edit" v-on:click="editSensor(sensor.id)">Edit</button>
+        <button class="delete" v-on:click="deleteSensor(sensor.id)">Delete</button>
       </tr>
       <tr>
         <td></td>
@@ -70,7 +71,7 @@ export default {
         body: JSON.stringify(this.sensors.find((sensor) => sensor.id == id)),
       })
         .then((response) => response.json())
-        .then((data) => (this.sensors = data));
+        .then(() => this.getData());
     },
 
     deleteSensor(id) {
@@ -82,7 +83,7 @@ export default {
         body: JSON.stringify(this.sensors.find((sensor) => sensor.id == id)),
       })
         .then((response) => response.json())
-        .then((data) => (this.sensors = data));
+        .then(() => this.getData());
     },
 
     addSensor() {
@@ -94,7 +95,7 @@ export default {
         body: JSON.stringify(this.newSensor),
       })
         .then((response) => response.json())
-        .then((data) => (this.sensors = data));
+        .then(() => this.getData());
     },
 
     getRooms() {
@@ -121,6 +122,28 @@ export default {
   width: 5vw;
   border: none;
   border-radius: 4px;
+}
+
+.edit {
+    background-color: #00bb0c;
+    color: white;
+    padding: 5px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: 5vw;
+    border: none;
+    border-radius: 4px;
+}
+
+.delete {
+    background-color: #ff0000;
+    color: white;
+    padding: 5px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: 5vw;
+    border: none;
+    border-radius: 4px;
 }
 
 input {

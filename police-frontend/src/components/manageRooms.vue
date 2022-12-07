@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Manage Rooms</h1>
     <table>
       <tr>
         <th>ID</th>
@@ -9,8 +10,8 @@
       <tr v-for="room in rooms" v-bind:key="room.id">
         <td>{{ room.id }}</td>
         <td><input v-model="room.name" /></td>
-        <button v-on:click="editRoom(room.id)">Edit</button>
-        <button v-on:click="deleteRoom(room.id)">Delete</button>
+        <button class="edit" v-on:click="editRoom(room.id)">Edit</button>
+        <button class="delete" v-on:click="deleteRoom(room.id)">Delete</button>
       </tr>
       <tr>
         <td></td>
@@ -52,7 +53,7 @@ export default {
         body: JSON.stringify(this.rooms.find((room) => room.id == id)),
       })
         .then((response) => response.json())
-        .then((data) => (this.rooms = data));
+        .then(() => this.getData());
     },
 
     deleteRoom(id) {
@@ -64,7 +65,7 @@ export default {
         body: JSON.stringify(this.rooms.find((room) => room.id == id)),
       })
         .then((response) => response.json())
-        .then((data) => (this.rooms = data));
+        .then(() => this.getData());
     },
 
     addRoom() {
@@ -76,7 +77,7 @@ export default {
         body: JSON.stringify(this.newRoom),
       })
         .then((response) => response.json())
-        .then((data) => (this.rooms = data))
+        .then(() => this.getData());
     },
   },
 
@@ -90,6 +91,28 @@ export default {
 
 .add {
     background-color: #0011ff;
+    color: white;
+    padding: 5px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: 5vw;
+    border: none;
+    border-radius: 4px;
+}
+
+.edit {
+    background-color: #00bb0c;
+    color: white;
+    padding: 5px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: 5vw;
+    border: none;
+    border-radius: 4px;
+}
+
+.delete {
+    background-color: #ff0000;
     color: white;
     padding: 5px 20px;
     margin: 8px 0;
