@@ -53,7 +53,7 @@ class roomModel(db.Model):
 
 RoomModelMarshal = {
     'id': fields.Integer,
-    'name': fields.Integer
+    'name': fields.String
 }
 
 
@@ -67,7 +67,7 @@ class sensorModel(db.Model):
 
 SensorModelMarshal = {
     'id': fields.Integer,
-    'name': fields.Integer,
+    'name': fields.String,
     'room_id': fields.Integer
 }
 
@@ -142,6 +142,7 @@ class Room(Resource):
     @marshal_with(RoomModelMarshal)
     def delete(self):
         data = request.get_json(force=True)
+        print(data)
         room_model = roomModel.query.filter_by(id=data['id']).first()
         db.session.delete(room_model)
         db.session.commit()

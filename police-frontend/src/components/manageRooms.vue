@@ -8,13 +8,13 @@
       </tr>
       <tr v-for="room in rooms" v-bind:key="room.id">
         <td>{{ room.id }}</td>
-        <td><input v-model="room.location" /></td>
+        <td><input v-model="room.name" /></td>
         <button v-on:click="editRoom(room.id)">Edit</button>
         <button v-on:click="deleteRoom(room.id)">Delete</button>
       </tr>
       <tr>
         <td></td>
-        <td><input v-model="newRoom.location" /></td>
+        <td><input v-model="newRoom.name" /></td>
         <button class="add" v-on:click="addRoom()">Add</button>
       </tr>
     </table>
@@ -44,7 +44,7 @@ export default {
     },
 
     editRoom(id) {
-      fetch("http://localhost:2000/rooms/" + id, {
+      fetch("http://localhost:2000/rooms", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export default {
     },
 
     deleteRoom(id) {
-      fetch("http://localhost:2000/rooms/" + id, {
+      fetch("http://localhost:2000/rooms", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -73,10 +73,10 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.newSensor),
+        body: JSON.stringify(this.newRoom),
       })
         .then((response) => response.json())
-        .then((data) => (this.rooms = data));
+        .then((data) => (this.rooms = data))
     },
   },
 
