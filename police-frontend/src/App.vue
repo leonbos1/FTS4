@@ -32,8 +32,16 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #000000;
   margin-top: 0px;
+  background-image: url("../public/background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 100%;
+  width: 100%;
+  position: fixed;
 }
 
 ul {
@@ -76,7 +84,6 @@ body {
 
 .container {
   padding: 16px;
-  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
