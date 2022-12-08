@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from flask_restful import Resource, Api, marshal_with, fields, reqparse
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -18,8 +18,6 @@ app.config['SECRET_KEY'] = 'secretkey'
 regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 db = SQLAlchemy(app)
 
-# https://www.youtube.com/watch?v=GMppyAPbLYk&ab_channel=TechWithTim
-
 class MeasurementModel(db.Model):
     __tablename__ = 'measurement'
     id = db.Column(db.Integer, primary_key=True)
@@ -31,10 +29,6 @@ class MeasurementModel(db.Model):
     date = db.Column(db.String)
     time = db.Column(db.String)
     sensor_id = db.Column(db.Integer, db.ForeignKey('sensor.id'))
-    
-
-    # def __repr__(self):
-    #     return f"Measurement(id = {id}, distance = {distance}, date = {date}, time = {time})" 
 
 MeasurementModelMarshal = {
     'id': fields.Integer,
@@ -93,6 +87,7 @@ def demo():
     return 'succes', 200
 
 #get request laatse endpoint opsturen
+# zodat het naar unity kan opgestuurd kan worden
 
 class Measurement(Resource):
 
