@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="manage">
     <h1>Manage Rooms</h1>
     <table>
       <tr>
@@ -88,6 +88,18 @@ export default {
 </script>
 
 <style>
+
+.manage {
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .add {
     background-color: #0011ff;
