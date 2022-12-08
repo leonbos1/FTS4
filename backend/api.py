@@ -1,4 +1,3 @@
-from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from flask_restful import Resource, Api, marshal_with, fields, reqparse
 from sqlalchemy import *
@@ -6,14 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import datetime
 
-
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
-#, supports_credentials=True
 CORS(app, resources={r"/*": {"origins": "*"}})
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
+    os.path.join(basedir, 'data.db')
 app.config['SECRET_KEY'] = 'secretkey'
 regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 db = SQLAlchemy(app)
@@ -35,23 +33,26 @@ MeasurementModelMarshal = {
     'distance': fields.Integer,
     'heartrate': fields.Integer,
     'amount': fields.Integer,
-    'mood': fields.String, 
+    'mood': fields.String,
     'sound': fields.Integer,
     'date': fields.String,
     'time': fields.String,
     'sensor_id': fields.Integer
 }
 
+
 class roomModel(db.Model):
-    
+
     __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+
 
 RoomModelMarshal = {
     'id': fields.Integer,
     'name': fields.Integer
 }
+
 
 class sensorModel(db.Model):
 
@@ -60,42 +61,43 @@ class sensorModel(db.Model):
     name = db.Column(db.String)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
 
+
 SensorModelMarshal = {
     'id': fields.Integer,
     'name': fields.Integer,
     'room_id': fields.Integer
 }
 
-class testModel(db.Model):
-    
-    __tablename__ = 'test'
+
+class demoModel(db.Model):
+    __tablename__ = 'demo'
     test = db.Column(db.String, primary_key=True)
 
-TestModelMarshal = {
-    'test': fields.String
+
+DemoModelMarshal = {
+    'demo': fields.String
 }
+
 
 @app.route("/demo", methods=["POST"])
 def demo():
     input_json = request.get_json(force=True)
-    test = input_json['test']
-    data = testModel(
-        test=test
+    demo = input_json['test']
+    data = demoModel(
+        demo=demo
     )
     db.session.add(data)
     db.session.commit()
     return 'succes', 200
 
-#get request laatse endpoint opsturen
-# zodat het naar unity kan opgestuurd kan worden
+# get request laatse endpoint opsturen
+
 
 class Measurement(Resource):
-
-
     @marshal_with(MeasurementModelMarshal)
     def get(self):
-        #where today
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        # where today
+        #date = datetime.datetime.now().strftime("%Y-%m-%d")
         #distance = DistanceModel.query.filter_by(date=date).all()
         distance = MeasurementModel.query.all()
         return distance
@@ -106,21 +108,93 @@ class Measurement(Resource):
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         time = datetime.datetime.now().strftime("%H:%M:%S")
 
+        measurement_model = MeasurementModel()
+        measurement_model.distance = data['distance']
+        measurement_model.sound = data['sound']
+        measurement_model.date = date
+        measurement_model.time = time
 
-        measurementmodel = MeasurementModel()
-        measurementmodel.distance = data['distance']
-        measurementmodel.sound = data['sound']
-        measurementmodel.date = date
-        measurementmodel.time = time
-        
-        db.session.add(measurementmodel)
+        db.session.add(measurement_model)
         db.session.commit()
 
-        return {
-            'data': data
-            }
+        return measurement_model
 
-api.add_resource(Measurement, '/distance')
+
+class Room(Resource):
+    @marshal_with(RoomModelMarshal)
+    def get(self):
+        room = roomModel.query.all()
+        return room
+
+    @marshal_with(RoomModelMarshal)
+    def post(self):
+        data = request.get_json(force=True)
+        room_model = roomModel()
+        room_model.name = data['name']
+        db.session.add(room_model)
+        db.session.commit()
+
+        return room_model
+
+    @marshal_with(RoomModelMarshal)
+    def delete(self):
+        data = request.get_json(force=True)
+        room_model = roomModel.query.filter_by(id=data['id']).first()
+        db.session.delete(room_model)
+        db.session.commit()
+
+        return room_model
+
+    @marshal_with(RoomModelMarshal)
+    def put(self):
+        data = request.get_json(force=True)
+        room_model = roomModel.query.filter_by(id=data['id']).first()
+        room_model.name = data['name']
+        db.session.commit()
+
+        return room_model
+
+
+class Sensor(Resource):
+    @marshal_with(SensorModelMarshal)
+    def get(self):
+        sensor = sensorModel.query.all()
+        return sensor
+
+    @marshal_with(SensorModelMarshal)
+    def post(self):
+        data = request.get_json(force=True)
+        sensor_model = sensorModel()
+        sensor_model.name = data['name']
+        sensor_model.room_id = data['room_id']
+        db.session.add(sensor_model)
+        db.session.commit()
+
+        return sensor_model
+
+    @marshal_with(SensorModelMarshal)
+    def delete(self):
+        data = request.get_json(force=True)
+        sensor_model = sensorModel.query.filter_by(id=data['id']).first()
+        db.session.delete(sensor_model)
+        db.session.commit()
+
+        return sensor_model
+
+    @marshal_with(SensorModelMarshal)
+    def put(self):
+        data = request.get_json(force=True)
+        sensor_model = sensorModel.query.filter_by(id=data['id']).first()
+        sensor_model.name = data['name']
+        sensor_model.room_id = data['room_id']
+        db.session.commit()
+
+        return sensor_model
+
+
+api.add_resource(Measurement, '/measurement')
+api.add_resource(Room, '/rooms')
+api.add_resource(Sensor, '/sensors')
 
 if __name__ == "__main__":
     with app.app_context():
