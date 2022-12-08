@@ -1,6 +1,6 @@
 <template>
-
   <div id="app">
+    <div class="bg"></div>
     <div id="nav">
       <ul>
         <li><router-link to="/">Home</router-link></li>
@@ -34,14 +34,15 @@ export default {
   text-align: center;
   color: #000000;
   margin-top: 0px;
-  background-image: url("../public/background.png");
+  /* background-image: url("../public/background.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-attachment: fixed; */
   height: 100%;
   width: 100%;
   position: fixed;
+  
 }
 
 ul {
@@ -88,7 +89,20 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+}
+
+.bg {
+  background-image: url("../public/background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
 }
 
 </style>
