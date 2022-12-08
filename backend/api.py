@@ -1,3 +1,4 @@
+from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import Resource, Api, marshal_with, fields, reqparse
 from sqlalchemy import *
@@ -16,6 +17,7 @@ app.config['SECRET_KEY'] = 'secretkey'
 regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 db = SQLAlchemy(app)
 
+
 class MeasurementModel(db.Model):
     __tablename__ = 'measurement'
     id = db.Column(db.Integer, primary_key=True)
@@ -27,6 +29,7 @@ class MeasurementModel(db.Model):
     date = db.Column(db.String)
     time = db.Column(db.String)
     sensor_id = db.Column(db.Integer, db.ForeignKey('sensor.id'))
+
 
 MeasurementModelMarshal = {
     'id': fields.Integer,
