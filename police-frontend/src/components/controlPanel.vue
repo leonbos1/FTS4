@@ -136,6 +136,14 @@ export default {
   align-items: center;
   width: 40vw;
   height: 50vh;
+  overflow: hidden;
+}
+
+.ongoing-situations {
+    /*make scrollable when going outside of div*/
+    overflow-y: scroll; 
+    height: 100%;
+    width: 100%;
 }
 
 .manage {
@@ -150,6 +158,26 @@ export default {
   align-items: center;
   width: 50vw;
   height: 50vh;
+}
+
+/*when width is less than 450px
+  make situations div 95% width */
+
+@media screen and (max-width: 450px) {
+    .situations {
+        width: 95%;
+    }
+
+    .ongoing-situations {
+        width: 100%;
+    }
+
+    .manage {
+        width: 95%;
+        margin: 0 auto;
+
+    }
+
 }
 
 .toggle-btn {
@@ -191,6 +219,5 @@ tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-th {
-}
+
 </style>
