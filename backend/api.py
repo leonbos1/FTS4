@@ -45,7 +45,6 @@ MeasurementModelMarshal = {
 
 
 class roomModel(db.Model):
-
     __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -58,7 +57,6 @@ RoomModelMarshal = {
 
 
 class sensorModel(db.Model):
-
     __tablename__ = 'sensor'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -74,16 +72,24 @@ SensorModelMarshal = {
 
 class demoModel(db.Model):
     __tablename__ = 'demo'
-    test = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    demo = db.Column(db.String)
 
 
 DemoModelMarshal = {
+    'id': fields.Integer,
     'demo': fields.String
 }
 
 
+@app.route("/demo", methods=["GET"])
+def get_demo():
+    demo = demoModel.query.order_by(demoModel.id.desc()).first()
+    return demo.demo, 200
+
+
 @app.route("/demo", methods=["POST"])
-def demo():
+def post_demo():
     input_json = request.get_json(force=True)
     demo = input_json['test']
     data = demoModel(

@@ -115,7 +115,7 @@ export default {
       });
     },
 
-    removeSituation(situation_id) {
+    deleteSituation(situation_id) {
       this.ongoingSituations = this.ongoingSituations.filter(
         (situation) => situation.id !== situation_id
       );
@@ -176,8 +176,31 @@ export default {
         width: 95%;
         margin: 0 auto;
 
-    }
-
+    }.manage {
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50vw;
+  height: 50vh;
+}.manage {
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50vw;
+  height: 50vh;
+}
 }
 
 .toggle-btn {
