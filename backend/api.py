@@ -85,7 +85,10 @@ DemoModelMarshal = {
 @app.route("/demo", methods=["GET"])
 def get_demo():
     demo = demoModel.query.order_by(demoModel.id.desc()).first()
-    return demo.demo, 200
+    #make json with demo demo
+    result = {'demo': demo.demo}
+
+    return result
 
 
 @app.route("/demo", methods=["POST"])
