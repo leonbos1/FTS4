@@ -102,8 +102,22 @@ def post_demo():
     db.session.commit()
     return 'succes', 200
 
-# get request laatse endpoint opsturen
-
+class Demo(Resource):
+    @marshal_with(DemoModelMarshal)
+    def get(self):
+        demo = demoModel.query.all()
+        return demo
+    
+    @marshal_with(DemoModelMarshal)
+    def post(self):
+        input_json = request.get_json(force=True)
+        demo = input_json['test']
+        data = demoModel(
+            demo=demo
+        )
+        db.session.add(data)
+        db.session.commit()
+        return data
 
 class Measurement(Resource):
     @marshal_with(MeasurementModelMarshal)
@@ -208,6 +222,7 @@ class Sensor(Resource):
 api.add_resource(Measurement, '/measurement')
 api.add_resource(Room, '/rooms')
 api.add_resource(Sensor, '/sensors')
+api.add_resource(Demo, '/demo')
 
 if __name__ == "__main__":
     with app.app_context():
