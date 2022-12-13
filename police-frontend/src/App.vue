@@ -4,10 +4,11 @@
     <div id="nav">
       <ul>
         <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/graph">Graph</router-link></li>
+        <!--<li><router-link to="/graph">Graph</router-link></li>-->
         <li><router-link to="/manage-sensors">Manage Sensors</router-link></li>
         <li><router-link to="/manage-rooms">Manage Rooms</router-link></li>
         <li><router-link to="/control-panel">Control panel</router-link></li>
+        <!--Remove this for final delivery!!!-->
         <li><router-link to="/demo">Demo</router-link></li>
 
       </ul>
