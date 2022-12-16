@@ -43,6 +43,22 @@ MeasurementModelMarshal = {
     'sensor_id': fields.Integer
 }
 
+class situationModel(db.Model):
+    __tablename__ = 'situation'
+    id = db.Column(db.Integer, primary_key=True)
+    situation = db.Column(db.String)
+    room = db.column(db.String)
+    time = db.column(db.String)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
+
+SituationModelMarshal = {
+    'id': fields.Integer,
+    'situation': fields.String,
+    'room': fields.String,
+    'time': fields.String,
+    'room_id': fields.Integer
+}
+
 
 class roomModel(db.Model):
     __tablename__ = 'room'
@@ -167,6 +183,22 @@ class Room(Resource):
 
         return room_model
 
+class Situation(Resource):
+    @marshal_with(SituationModelMarshal)
+    def get(self):
+        situation = situationModel.query.all()
+        return situation
+    
+    def post(self):
+        data = request.get_json(force=True)
+        time = datetime.datetime.now().strftime("%H:%M:%S")
+
+        situation_model = situationModel()
+        situation_model.situation = data['situation']
+        situation_model.room = data['room']
+        situation_model.time = time
+        db.session.add(situation_model)
+        db.session.commit()
 
 class Sensor(Resource):
     @marshal_with(SensorModelMarshal)
@@ -208,6 +240,7 @@ class Sensor(Resource):
 api.add_resource(Measurement, '/measurement')
 api.add_resource(Room, '/rooms')
 api.add_resource(Sensor, '/sensors')
+api.add_resource(Situation, '/situations')
 
 if __name__ == "__main__":
     with app.app_context():
