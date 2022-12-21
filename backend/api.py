@@ -21,71 +21,64 @@ db = SQLAlchemy(app)
 class MeasurementModel(db.Model):
     __tablename__ = 'measurement'
     id = db.Column(db.Integer, primary_key=True)
-    distance = db.Column(db.Integer)
-    heartrate = db.Column(db.Integer)
-    amount = db.Column(db.Integer)
-    mood = db.Column(db.String)
-    sound = db.Column(db.Integer)
+    distance = db.Column(db.Float)
+    sound = db.Column(db.Float)
     date = db.Column(db.String)
     time = db.Column(db.String)
     sensor_id = db.Column(db.Integer, db.ForeignKey('sensor.id'))
 
 
-MeasurementModelMarshal = {
-    'id': fields.Integer,
-    'distance': fields.Integer,
-    'heartrate': fields.Integer,
-    'amount': fields.Integer,
-    'mood': fields.String,
-    'sound': fields.Integer,
-    'date': fields.String,
-    'time': fields.String,
-    'sensor_id': fields.Integer
-}
-
-
-class roomModel(db.Model):
+class RoomModel(db.Model):
     __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
 
-RoomModelMarshal = {
-    'id': fields.Integer,
-    'name': fields.String
-}
-
-
-class sensorModel(db.Model):
+class SensorModel(db.Model):
     __tablename__ = 'sensor'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
 
 
-SensorModelMarshal = {
-    'id': fields.Integer,
-    'name': fields.String,
-    'room_id': fields.Integer
-}
-
-
-class demoModel(db.Model):
+class DemoModel(db.Model):
     __tablename__ = 'demo'
     id = db.Column(db.Integer, primary_key=True)
     demo = db.Column(db.String)
 
 
-DemoModelMarshal = {
+measurement_field = {
+    'id': fields.Integer,
+    'distance': fields.Float,
+    'sound': fields.Float,
+    'date': fields.String,
+    'time': fields.String,
+    'sensor_id': fields.Integer
+}
+
+room_field = {
+    'id': fields.Integer,
+    'name': fields.String
+}
+
+sensor_field = {
+    'id': fields.Integer,
+    'name': fields.String,
+    'room_id': fields.Integer
+}
+
+demo_field = {
     'id': fields.Integer,
     'demo': fields.String
 }
 
+# Routes
+
 
 @app.route("/demo", methods=["GET"])
 def get_demo():
-    demo = demoModel.query.order_by(demoModel.id.desc()).first()
-    #make json with demo demo
+    demo = DemoModel.query.order_by(DemoModel.id.desc()).first()
+    # make json with demo demo
     result = {'demo': demo.demo}
 
     return result
@@ -95,32 +88,34 @@ def get_demo():
 def post_demo():
     input_json = request.get_json(force=True)
     demo = input_json['test']
-    data = demoModel(
+    data = DemoModel(
         demo=demo
     )
     db.session.add(data)
     db.session.commit()
     return 'succes', 200
 
+
 class Demo(Resource):
-    @marshal_with(DemoModelMarshal)
+    @marshal_with(demo_field)
     def get(self):
-        demo = demoModel.query.all()
+        demo = DemoModel.query.all()
         return demo
-    
-    @marshal_with(DemoModelMarshal)
+
+    @marshal_with(demo_field)
     def post(self):
         input_json = request.get_json(force=True)
         demo = input_json['test']
-        data = demoModel(
+        data = DemoModel(
             demo=demo
         )
         db.session.add(data)
         db.session.commit()
         return data
 
+
 class Measurement(Resource):
-    @marshal_with(MeasurementModelMarshal)
+    @marshal_with(measurement_field)
     def get(self):
         # where today
         #date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -128,7 +123,7 @@ class Measurement(Resource):
         distance = MeasurementModel.query.all()
         return distance
 
-    @marshal_with(MeasurementModelMarshal)
+    @marshal_with(measurement_field)
     def post(self):
         data = request.get_json(force=True)
         date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -147,35 +142,35 @@ class Measurement(Resource):
 
 
 class Room(Resource):
-    @marshal_with(RoomModelMarshal)
+    @marshal_with(room_field)
     def get(self):
-        room = roomModel.query.all()
+        room = RoomModel.query.all()
         return room
 
-    @marshal_with(RoomModelMarshal)
+    @marshal_with(room_field)
     def post(self):
         data = request.get_json(force=True)
-        room_model = roomModel()
+        room_model = RoomModel()
         room_model.name = data['name']
         db.session.add(room_model)
         db.session.commit()
 
         return room_model
 
-    @marshal_with(RoomModelMarshal)
+    @marshal_with(room_field)
     def delete(self):
         data = request.get_json(force=True)
         print(data)
-        room_model = roomModel.query.filter_by(id=data['id']).first()
+        room_model = RoomModel.query.filter_by(id=data['id']).first()
         db.session.delete(room_model)
         db.session.commit()
 
         return room_model
 
-    @marshal_with(RoomModelMarshal)
+    @marshal_with(room_field)
     def put(self):
         data = request.get_json(force=True)
-        room_model = roomModel.query.filter_by(id=data['id']).first()
+        room_model = RoomModel.query.filter_by(id=data['id']).first()
         room_model.name = data['name']
         db.session.commit()
 
@@ -183,15 +178,15 @@ class Room(Resource):
 
 
 class Sensor(Resource):
-    @marshal_with(SensorModelMarshal)
+    @marshal_with(sensor_field)
     def get(self):
-        sensor = sensorModel.query.all()
+        sensor = SensorModel.query.all()
         return sensor
 
-    @marshal_with(SensorModelMarshal)
+    @marshal_with(sensor_field)
     def post(self):
         data = request.get_json(force=True)
-        sensor_model = sensorModel()
+        sensor_model = SensorModel()
         sensor_model.name = data['name']
         sensor_model.room_id = data['room_id']
         db.session.add(sensor_model)
@@ -199,19 +194,19 @@ class Sensor(Resource):
 
         return sensor_model
 
-    @marshal_with(SensorModelMarshal)
+    @marshal_with(sensor_field)
     def delete(self):
         data = request.get_json(force=True)
-        sensor_model = sensorModel.query.filter_by(id=data['id']).first()
+        sensor_model = SensorModel.query.filter_by(id=data['id']).first()
         db.session.delete(sensor_model)
         db.session.commit()
 
         return sensor_model
 
-    @marshal_with(SensorModelMarshal)
+    @marshal_with(sensor_field)
     def put(self):
         data = request.get_json(force=True)
-        sensor_model = sensorModel.query.filter_by(id=data['id']).first()
+        sensor_model = SensorModel.query.filter_by(id=data['id']).first()
         sensor_model.name = data['name']
         sensor_model.room_id = data['room_id']
         db.session.commit()
