@@ -5,6 +5,7 @@ from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 import os
 import datetime
+import random
 
 app = Flask(__name__)
 api = Api(app)
@@ -32,6 +33,15 @@ class RoomModel(db.Model):
     __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+
+
+class PersonModel(db.Model):
+    __tablename__ = 'person'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    heart_rate = db.Column(db.Integer)
+    behaviour = db.Column(db.String)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
 
 
 class SensorModel(db.Model):
@@ -72,7 +82,76 @@ demo_field = {
     'demo': fields.String
 }
 
-# Routes
+# Data generator
+
+
+def generate_data(sensor_id: int):
+    #hier situatie ophalen. als er een situatie is, dan moet er data gegenereerd worden.
+    #als er geen situatie is, gewoon return
+
+    room = RoomModel.query.filter_by(id=sensor_id).first()
+
+    #alle mensen in een room
+    people = PersonModel.query.filter_by(room_id=room.id).all()
+
+    #als er geen mensen zijn: zet er mensen in.
+    if not people:
+        if situation.situation == "hostage":
+            amount_of_people = random.randint(1, 10)
+            amount_of_aggresive_people = random.randint(1, 4)
+
+        elif situation.situation == "intruder":
+            amount_of_people = random.randint(0, 4)
+            amount_of_aggresive_people = random.randint(1, 4)
+
+        elif situation.situation == "medical emergency":
+            amount_of_people = 1
+            amount_of_aggresive_people = 0
+
+        elif situation.situation == "fire":
+            amount_of_people = random.randint(0, 2)
+            amount_of_aggresive_people = 0
+
+        for i in range(amount_of_people):
+            person = generate_person(False, room.id)
+            db.session.add(person)
+        
+        for i in range(amount_of_aggresive_people):
+            person = generate_person(True, room.id)
+            db.session.add(person) 
+
+    #als er mensen zijn: update de heart rate een beetje
+    if len(people) > 0:
+        for person in people:
+            if person.behaviour == "aggressive":
+                person.heart_rate = random.randint(120, 150)
+            else:
+                person.heart_rate = random.randint(80, 100)
+
+
+def generate_person(is_dangerous: bool, room_id: int):
+
+    names = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy", "Kevin", "Linda", "Mike", "Nancy", "Oscar", "Peggy", "Quentin", "Ruth", "Steve", "Trudy", "Victor", "Wendy", "Xavier", "Yvonne", "Zach"] 
+
+    name = random.choice(names)
+
+    if is_dangerous:
+        return PersonModel(
+            name=name,
+            heart_rate=random.randint(120, 150),
+            behaviour="aggressive",
+            room_id=room_id
+        )
+
+    return PersonModel(
+        name=name,
+        heart_rate=random.randint(80, 100),
+        behaviour="normal",
+        room_id=room_id
+    )
+
+
+    # Routes
 
 
 @app.route("/demo", methods=["GET"])
@@ -129,11 +208,14 @@ class Measurement(Resource):
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         time = datetime.datetime.now().strftime("%H:%M:%S")
 
+        # generate_data(data['sensor_id'])
+
         measurement_model = MeasurementModel()
         measurement_model.distance = data['distance']
         measurement_model.sound = data['sound']
         measurement_model.date = date
         measurement_model.time = time
+        measurement_model.sensor_id = data['sensor_id']
 
         db.session.add(measurement_model)
         db.session.commit()
