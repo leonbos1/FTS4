@@ -84,6 +84,11 @@ export default {
         this.dataGenerator = true;
       }
     },
+    getData() {
+      fetch("http://localhost:2000/situations")
+        .then((response) => response.json())
+        .then((data) => (this.selectedRoom = data));
+    },
 
     // setAmountOfPeople() {
     //   fetch(this.url + "/people_amount", {
@@ -107,12 +112,23 @@ export default {
 
     addSituation() {
       //add room and situations to this.ongoingSituations
-      this.ongoingSituations.push({
-        id: this.ongoingSituations.length + 1,
-        room_id: this.selectedRoom,
-        situation: this.selectedSituation,
-        startTime: new Date().toLocaleTimeString(),
-      });
+      // this.ongoingSituations.push({
+      //   id: this.ongoingSituations.length + 1,
+      //   room_id: this.selectedRoom,
+      //   situation: this.selectedSituation,
+      //   startTime: new Date().toLocaleTimeString(),
+      // });
+      
+      fetch("http://localhost:2000/situations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        }, //geeft json object aan api, example: {"location": "Zp07/01"}
+        body: JSON.stringify(this.selectedSituation),
+      })
+        .then((response) => response.json())
+        .then(() => this.getData());
+
     },
 
     deleteSituation(situation_id) {

@@ -5,6 +5,7 @@ from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 import os
 import datetime
+from time import sleep
 
 app = Flask(__name__)
 api = Api(app)
@@ -47,14 +48,12 @@ class situationModel(db.Model):
     __tablename__ = 'situation'
     id = db.Column(db.Integer, primary_key=True)
     situation = db.Column(db.String)
-    room = db.column(db.String)
     time = db.column(db.String)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
 
 SituationModelMarshal = {
     'id': fields.Integer,
     'situation': fields.String,
-    'room': fields.String,
     'time': fields.String,
     'room_id': fields.Integer
 }
@@ -195,7 +194,6 @@ class Situation(Resource):
 
         situation_model = situationModel()
         situation_model.situation = data['situation']
-        situation_model.room = data['room']
         situation_model.time = time
         db.session.add(situation_model)
         db.session.commit()
