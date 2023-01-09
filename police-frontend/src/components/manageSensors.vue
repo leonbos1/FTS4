@@ -84,9 +84,10 @@ export default {
       })
         .then((response) => response.json())
         .then(() => this.getData());
-    },
+    }, 
 
     addSensor() {
+      console.log(this.newSensor);
       fetch("http://localhost:2000/sensors", {
         method: "POST",
         headers: {

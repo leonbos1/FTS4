@@ -68,10 +68,13 @@ export default {
       url: "http://127.0.0.1:2000",
       minPeople: 0,
       maxPeople: 10,
+      newSituation: {
+        location: "",
+      },
       rooms: [],
       situations: ["Fire", "Intruder", "Medical emergency", "Hostage"],
-      selectedRoom: "",
-      selectedSituation: "",
+      // selectedRoom: "",
+      // selectedSituation: "",
       ongoingSituations: [],
     };
   },
@@ -83,6 +86,12 @@ export default {
       } else {
         this.dataGenerator = true;
       }
+    },
+    getData() {
+      
+      fetch("http://localhost:2000/situations")
+        .then((response) => response.json())
+        .then((data) => (this.ongoingSituations = data));
     },
 
     // setAmountOfPeople() {
@@ -107,12 +116,27 @@ export default {
 
     addSituation() {
       //add room and situations to this.ongoingSituations
-      this.ongoingSituations.push({
+      console.log(this.selectedRoom)
+      console.log(this.selectedSituation)
+
+      this.newSituation = {
         id: this.ongoingSituations.length + 1,
         room_id: this.selectedRoom,
         situation: this.selectedSituation,
         startTime: new Date().toLocaleTimeString(),
-      });
+      }
+
+      console.log(this.newSituation);
+      fetch("http://localhost:2000/situations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        }, //geeft json object aan api, example: {"location": "Zp07/01"}
+        body: JSON.stringify(this.newSituation),
+      })
+        .then((response) => response.json())
+        .then(() => this.getData());
+
     },
 
     deleteSituation(situation_id) {

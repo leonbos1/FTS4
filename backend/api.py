@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import datetime
 import random
+from time import sleep
 
 app = Flask(__name__)
 api = Api(app)
@@ -27,6 +28,35 @@ class MeasurementModel(db.Model):
     date = db.Column(db.String)
     time = db.Column(db.String)
     sensor_id = db.Column(db.Integer, db.ForeignKey('sensor.id'))
+
+
+MeasurementModelMarshal = {
+    'id': fields.Integer,
+    'distance': fields.Integer,
+    'heartrate': fields.Integer,
+    'amount': fields.Integer,
+    'mood': fields.String,
+    'sound': fields.Integer,
+    'date': fields.String,
+    'time': fields.String,
+    'sensor_id': fields.Integer
+}
+
+
+class SituationModel(db.Model):
+    __tablename__ = 'situation'
+    id = db.Column(db.Integer, primary_key=True)
+    situation = db.Column(db.String)
+    time = db.Column(db.String)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
+
+
+SituationModelMarshal = {
+    'id': fields.Integer,
+    'situation': fields.String,
+    'time': fields.String,
+    'room_id': fields.Integer
+}
 
 
 class RoomModel(db.Model):
@@ -86,15 +116,15 @@ demo_field = {
 
 
 def generate_data(sensor_id: int):
-    #hier situatie ophalen. als er een situatie is, dan moet er data gegenereerd worden.
-    #als er geen situatie is, gewoon return
+    # hier situatie ophalen. als er een situatie is, dan moet er data gegenereerd worden.
+    # als er geen situatie is, gewoon return
 
     room = RoomModel.query.filter_by(id=sensor_id).first()
 
-    #alle mensen in een room
+    # alle mensen in een room
     people = PersonModel.query.filter_by(room_id=room.id).all()
 
-    #als er geen mensen zijn: zet er mensen in.
+    # als er geen mensen zijn: zet er mensen in.
     if not people:
         if situation.situation == "hostage":
             amount_of_people = random.randint(1, 10)
@@ -115,12 +145,12 @@ def generate_data(sensor_id: int):
         for i in range(amount_of_people):
             person = generate_person(False, room.id)
             db.session.add(person)
-        
+
         for i in range(amount_of_aggresive_people):
             person = generate_person(True, room.id)
-            db.session.add(person) 
+            db.session.add(person)
 
-    #als er mensen zijn: update de heart rate een beetje
+    # als er mensen zijn: update de heart rate een beetje
     if len(people) > 0:
         for person in people:
             if person.behaviour == "aggressive":
@@ -131,7 +161,8 @@ def generate_data(sensor_id: int):
 
 def generate_person(is_dangerous: bool, room_id: int):
 
-    names = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy", "Kevin", "Linda", "Mike", "Nancy", "Oscar", "Peggy", "Quentin", "Ruth", "Steve", "Trudy", "Victor", "Wendy", "Xavier", "Yvonne", "Zach"] 
+    names = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy", "Kevin", "Linda",
+             "Mike", "Nancy", "Oscar", "Peggy", "Quentin", "Ruth", "Steve", "Trudy", "Victor", "Wendy", "Xavier", "Yvonne", "Zach"]
 
     name = random.choice(names)
 
@@ -149,7 +180,6 @@ def generate_person(is_dangerous: bool, room_id: int):
         behaviour="normal",
         room_id=room_id
     )
-
 
     # Routes
 
@@ -259,6 +289,23 @@ class Room(Resource):
         return room_model
 
 
+class Situation(Resource):
+    @marshal_with(SituationModelMarshal)
+    def get(self):
+        situation = situationModel.query.all()
+        return situation
+
+    def post(self):
+        data = request.get_json(force=True)
+        time = datetime.datetime.now().strftime("%H:%M:%S")
+
+        situation_model = situationModel()
+        situation_model.situation = data['situation']
+        situation_model.time = time
+        db.session.add(situation_model)
+        db.session.commit()
+
+
 class Sensor(Resource):
     @marshal_with(sensor_field)
     def get(self):
@@ -300,6 +347,7 @@ api.add_resource(Measurement, '/measurement')
 api.add_resource(Room, '/rooms')
 api.add_resource(Sensor, '/sensors')
 api.add_resource(Demo, '/demo')
+api.add_resource(Situation, '/situations')
 
 if __name__ == "__main__":
     with app.app_context():
