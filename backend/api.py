@@ -56,7 +56,8 @@ SituationModelMarshal = {
     'situation': fields.String,
     'time': fields.String,
     'room_id': fields.Integer,
-    'room_name': fields.String
+    'room_name': fields.String,
+    'occupants': fields.Integer
 }
 
 
@@ -116,34 +117,37 @@ demo_field = {
 # Data generator
 
 
-def generate_data(sensor_id: int):
+def generate_data(situation_id: int):
     # hier situatie ophalen. als er een situatie is, dan moet er data gegenereerd worden.
     # als er geen situatie is, gewoon return
-    situation = SituationModel.query.filter_by(room_id=sensor_id).first()
+    situation = SituationModel.query.filter_by(id=situation_id).first()
 
     if not situation:
         return
 
-    room = RoomModel.query.filter_by(id=sensor_id).first()
+    room = RoomModel.query.filter_by(id=situation.room_id).first()
 
     # alle mensen in een room
     people = PersonModel.query.filter_by(room_id=room.id).all()
 
     # als er geen mensen zijn: zet er mensen in.
     if not people:
-        if situation.situation == "hostage":
+
+        situation_name = situation.situation.lower()
+
+        if situation_name == "hostage":
             amount_of_people = random.randint(1, 10)
             amount_of_aggresive_people = random.randint(1, 4)
 
-        elif situation.situation == "intruder":
+        elif situation_name == "intruder":
             amount_of_people = random.randint(0, 4)
             amount_of_aggresive_people = random.randint(1, 4)
 
-        elif situation.situation == "medical emergency":
+        elif situation_name == "medical emergency":
             amount_of_people = 1
             amount_of_aggresive_people = 0
 
-        elif situation.situation == "fire":
+        elif situation_name == "fire":
             amount_of_people = random.randint(0, 2)
             amount_of_aggresive_people = 0
 
@@ -154,6 +158,7 @@ def generate_data(sensor_id: int):
         for i in range(amount_of_aggresive_people):
             person = generate_person(True, room.id)
             db.session.add(person)
+        db.session.commit()
 
     # als er mensen zijn: update de heart rate een beetje
     if len(people) > 0:
@@ -197,6 +202,12 @@ def get_demo():
 
     return result
 
+@app.route("/generate", methods=["POST"])
+def test_generate():
+    input_json = request.get_json(force=True)
+    situation_id = input_json['situation_id']
+    generate_data(situation_id)
+    return 'succes', 200
 
 @app.route("/demo", methods=["POST"])
 def post_demo():
@@ -300,6 +311,11 @@ class Situation(Resource):
         situation = SituationModel.query.all()
 
         for s in situation:
+
+            people_in_room = PersonModel.query.filter_by(room_id=s.room_id).all()
+            s.occupants = len(people_in_room)
+            print(s.occupants)
+
             room = RoomModel.query.filter_by(id=s.room_id).first()
             s.room_name = room.name
             
@@ -316,22 +332,36 @@ class Situation(Resource):
         db.session.add(situation_model)
         db.session.commit()
 
+        generate_data(situation_model.id)
+
+        return 'Succes', 200
+
     def delete(self):
         data = request.get_json(force=True)
 
         if data['all'] == True:
             #remove all situations
             situation_model = SituationModel.query.all()
+            #remove all people
+            person_model = PersonModel.query.all()
+            for person in person_model:
+                db.session.delete(person)
             for situation in situation_model:
                 db.session.delete(situation)
             db.session.commit()
-            return 200, 'Succes'
+            return 'Succes', 200
 
         situation_model = SituationModel.query.filter_by(id=data['id']).first()
+
+        persons = PersonModel.query.filter_by(room_id=situation_model.room_id).all()
+
+        for person in persons:
+            db.session.delete(person)
+            
         db.session.delete(situation_model)
         db.session.commit()
 
-        return 200, 'Succes'
+        return 'Succes', 200
 
 
 class Sensor(Resource):

@@ -33,16 +33,21 @@
           <tr>
             <th>Room</th>
             <th>Situation</th>
+            <th>Occupants</th>
             <th>Start time</th>
           </tr>
           <tr v-for="situation in ongoingSituations" v-bind:key="situation.id">
             <td>{{ situation.room_name }}</td>
             <td>{{ situation.situation }}</td>
+            <td>{{ situation.occupants }}</td>
             <td>{{ situation.time }}</td>
             <td>
               <button class="delete" @click="deleteSituation(situation.id)">
                 Stop
               </button>
+           <!-- for testing   <button class="delete" @click="generate(situation.id)">
+                Generate
+              </button> -->
             </td>
           </tr>
         </table>
@@ -66,8 +71,6 @@ export default {
       data: [],
       dataGenerator: false,
       url: "http://127.0.0.1:2000",
-      minPeople: 0,
-      maxPeople: 10,
       newSituation: {
         location: "",
       },
@@ -80,6 +83,19 @@ export default {
   },
 
   methods: {
+    generate(situation_id) {
+      fetch(this.url + "/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          situation_id: situation_id,
+        }),
+      })
+        .then(() => this.getData());
+    },
+
     turnOffSituations() {
       fetch("http://localhost:2000/situations", {
         method: "DELETE",
@@ -98,6 +114,7 @@ export default {
       fetch("http://localhost:2000/situations")
         .then((response) => response.json())
         .then((data) => (this.ongoingSituations = data))
+        //.then(() => console.log(this.ongoingSituations));
     },
 
     // setAmountOfPeople() {
@@ -128,7 +145,6 @@ export default {
       this.newSituation = {
         room_id: this.getRoomKey(this.selectedRoom),
         situation: this.selectedSituation,
-        occupants: this.newOccupants,
         startTime: new Date().toLocaleTimeString(),
       };
 
