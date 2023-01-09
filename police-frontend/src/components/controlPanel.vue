@@ -1,9 +1,8 @@
 <template>
   <div class="manage">
     <div class="toggle-div">
-      <button class="toggle-btn" @click="toggleDatagenerator()">
-        <span v-if="dataGenerator">Stop datagenerator</span>
-        <span v-else>Start datagenerator</span>
+      <button class="toggle-btn" @click="turnOffSituations()">
+        <span>Stop all situations</span>
       </button>
     </div>
 
@@ -37,9 +36,9 @@
             <th>Start time</th>
           </tr>
           <tr v-for="situation in ongoingSituations" v-bind:key="situation.id">
-            <td>{{ situation.room_id }}</td>
+            <td>{{ situation.room_name }}</td>
             <td>{{ situation.situation }}</td>
-            <td>{{ situation.startTime }}</td>
+            <td>{{ situation.time }}</td>
             <td>
               <button class="delete" @click="deleteSituation(situation.id)">
                 Stop
@@ -59,6 +58,7 @@ export default {
 
   mounted() {
     this.getRooms();
+    this.getData();
   },
 
   data: function () {
@@ -73,25 +73,31 @@ export default {
       },
       rooms: [],
       situations: ["Fire", "Intruder", "Medical emergency", "Hostage"],
-      // selectedRoom: "",
-      // selectedSituation: "",
+      selectedRoom: "",
+      selectedSituation: "",
       ongoingSituations: [],
     };
   },
 
   methods: {
-    toggleDatagenerator() {
-      if (this.dataGenerator) {
-        this.dataGenerator = false;
-      } else {
-        this.dataGenerator = true;
-      }
+    turnOffSituations() {
+      fetch("http://localhost:2000/situations", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          all: true,
+        })
+      })
+        .then((response) => response.json())
+        .then(() => this.getData());
     },
+
     getData() {
-      
       fetch("http://localhost:2000/situations")
         .then((response) => response.json())
-        .then((data) => (this.ongoingSituations = data));
+        .then((data) => (this.ongoingSituations = data))
     },
 
     // setAmountOfPeople() {
@@ -108,6 +114,10 @@ export default {
     //   });
     // },
 
+    getRoomKey(roomName) {
+    return this.rooms.find((room) => room.name === roomName).id;
+    },
+
     getRooms() {
       fetch(this.url + "/rooms")
         .then((response) => response.json())
@@ -115,34 +125,37 @@ export default {
     },
 
     addSituation() {
-      //add room and situations to this.ongoingSituations
-      console.log(this.selectedRoom)
-      console.log(this.selectedSituation)
-
       this.newSituation = {
-        id: this.ongoingSituations.length + 1,
-        room_id: this.selectedRoom,
+        room_id: this.getRoomKey(this.selectedRoom),
         situation: this.selectedSituation,
+        occupants: this.newOccupants,
         startTime: new Date().toLocaleTimeString(),
-      }
+      };
 
-      console.log(this.newSituation);
       fetch("http://localhost:2000/situations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        }, //geeft json object aan api, example: {"location": "Zp07/01"}
+        },
         body: JSON.stringify(this.newSituation),
       })
         .then((response) => response.json())
         .then(() => this.getData());
-
     },
 
     deleteSituation(situation_id) {
-      this.ongoingSituations = this.ongoingSituations.filter(
-        (situation) => situation.id !== situation_id
-      );
+      fetch("http://localhost:2000/situations", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          'all': false,
+          'id': situation_id
+        })
+      })
+        .then((response) => response.json())
+        .then(() => this.getData());
     },
   },
 };
@@ -164,10 +177,10 @@ export default {
 }
 
 .ongoing-situations {
-    /*make scrollable when going outside of div*/
-    overflow-y: scroll; 
-    height: 100%;
-    width: 100%;
+  /*make scrollable when going outside of div*/
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
 }
 
 .manage {
@@ -188,43 +201,44 @@ export default {
   make situations div 95% width */
 
 @media screen and (max-width: 450px) {
-    .situations {
-        width: 95%;
-    }
+  .situations {
+    width: 95%;
+  }
 
-    .ongoing-situations {
-        width: 100%;
-    }
+  .ongoing-situations {
+    width: 100%;
+  }
 
-    .manage {
-        width: 95%;
-        margin: 0 auto;
-
-    }.manage {
-  margin: 0 auto;
-  background-color: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 50vw;
-  height: 50vh;
-}.manage {
-  margin: 0 auto;
-  background-color: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 50vw;
-  height: 50vh;
-}
+  .manage {
+    width: 95%;
+    margin: 0 auto;
+  }
+  .manage {
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50vw;
+    height: 50vh;
+  }
+  .manage {
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50vw;
+    height: 50vh;
+  }
 }
 
 .toggle-btn {
@@ -265,6 +279,4 @@ td {
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
-
-
 </style>

@@ -55,7 +55,8 @@ SituationModelMarshal = {
     'id': fields.Integer,
     'situation': fields.String,
     'time': fields.String,
-    'room_id': fields.Integer
+    'room_id': fields.Integer,
+    'room_name': fields.String
 }
 
 
@@ -118,6 +119,10 @@ demo_field = {
 def generate_data(sensor_id: int):
     # hier situatie ophalen. als er een situatie is, dan moet er data gegenereerd worden.
     # als er geen situatie is, gewoon return
+    situation = SituationModel.query.filter_by(room_id=sensor_id).first()
+
+    if not situation:
+        return
 
     room = RoomModel.query.filter_by(id=sensor_id).first()
 
@@ -292,18 +297,41 @@ class Room(Resource):
 class Situation(Resource):
     @marshal_with(SituationModelMarshal)
     def get(self):
-        situation = situationModel.query.all()
+        situation = SituationModel.query.all()
+
+        for s in situation:
+            room = RoomModel.query.filter_by(id=s.room_id).first()
+            s.room_name = room.name
+            
         return situation
 
     def post(self):
         data = request.get_json(force=True)
         time = datetime.datetime.now().strftime("%H:%M:%S")
 
-        situation_model = situationModel()
+        situation_model = SituationModel()
         situation_model.situation = data['situation']
         situation_model.time = time
+        situation_model.room_id = data['room_id']
         db.session.add(situation_model)
         db.session.commit()
+
+    def delete(self):
+        data = request.get_json(force=True)
+
+        if data['all'] == True:
+            #remove all situations
+            situation_model = SituationModel.query.all()
+            for situation in situation_model:
+                db.session.delete(situation)
+            db.session.commit()
+            return 200, 'Succes'
+
+        situation_model = SituationModel.query.filter_by(id=data['id']).first()
+        db.session.delete(situation_model)
+        db.session.commit()
+
+        return 200, 'Succes'
 
 
 class Sensor(Resource):
