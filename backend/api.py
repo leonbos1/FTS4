@@ -48,7 +48,7 @@ class situationModel(db.Model):
     __tablename__ = 'situation'
     id = db.Column(db.Integer, primary_key=True)
     situation = db.Column(db.String)
-    time = db.column(db.String)
+    time = db.Column(db.String)
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
 
 SituationModelMarshal = {

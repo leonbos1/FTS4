@@ -87,6 +87,7 @@ export default {
     }, 
 
     addSensor() {
+      console.log(this.newSensor);
       fetch("http://localhost:2000/sensors", {
         method: "POST",
         headers: {
