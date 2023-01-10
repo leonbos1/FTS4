@@ -259,7 +259,7 @@ export default {
 }
 
 .toggle-btn {
-  background-color: #0000ff;
+  background-color: #ff0000;
   border: none;
   color: white;
   padding: 8px 25px;
@@ -269,7 +269,7 @@ export default {
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
-  border: 2px solid #0000ff;
+  border: 2px solid #ff0000;
   border-radius: 10px;
 }
 
