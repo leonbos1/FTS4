@@ -75,7 +75,7 @@ export default {
         location: "",
       },
       rooms: [],
-      situations: ["Fire", "Intruder", "Medical emergency", "Hostage"],
+      situations: ["Fire", "Intruder", "Medical emergency", "Hostage","Aggression"],
       selectedRoom: "",
       selectedSituation: "",
       ongoingSituations: [],
@@ -142,6 +142,7 @@ export default {
     },
 
     addSituation() {
+      
       this.newSituation = {
         room_id: this.getRoomKey(this.selectedRoom),
         situation: this.selectedSituation,

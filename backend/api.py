@@ -151,6 +151,14 @@ def generate_data(situation_id: int):
             amount_of_people = random.randint(0, 2)
             amount_of_aggresive_people = 0
 
+        elif situation_name == "aggression":
+            amount_of_people = 1
+            amount_of_aggresive_people = 1
+        
+        else:
+            amount_of_people = 1
+            amount_of_aggresive_people = 1
+
         for i in range(amount_of_people):
             person = generate_person(False, room.id)
             db.session.add(person)
@@ -218,6 +226,10 @@ def post_demo():
     )
     db.session.add(data)
     db.session.commit()
+    return 'succes', 200
+
+@app.route("/status", methods=["GET"])
+def status():
     return 'succes', 200
 
 
