@@ -22,10 +22,19 @@
         certain behaviours and will send this information to the police.
       </p>
     </div>
+    <div class="api-status">
+      <h1>API Status</h1>
+      <p>
+        The API is currently
+        <span v-if="this.status === 'UP'">up</span>
+        <span v-else>down</span>
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
+
 export default {
   name: "HomePage",
   components: {},
@@ -33,8 +42,34 @@ export default {
   data: function () {
     return {
       data: [],
+      url: "http://127.0.0.1:2000",
+      status: "DOWN",
     };
+
+
   },
+
+  mounted() {
+    setInterval(() => {
+      this.getApiStatus();
+    }, 2000);
+
+  },
+
+  methods: {
+    getApiStatus() {
+      fetch(this.url + "/status")
+      .then((response) => {
+        if (response.status == 200) {
+          this.status = "UP";
+        }
+        else {
+          this.status = "DOWN";
+        }
+      });
+    },
+  },
+
 };
 </script>
 
