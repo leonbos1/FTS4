@@ -34,7 +34,7 @@
 </template>
 
 <script>
-
+import data from "../data.json";
 export default {
   name: "HomePage",
   components: {},
@@ -42,7 +42,7 @@ export default {
   data: function () {
     return {
       data: [],
-      url: "http://127.0.0.1:2000",
+      url: data.url,
       status: "DOWN",
     };
 
@@ -50,6 +50,7 @@ export default {
   },
 
   mounted() {
+    this.getApiStatus();
     setInterval(() => {
       this.getApiStatus();
     }, 2000);

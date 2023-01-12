@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import data from "../data.json";
 export default {
   name: "ManageSensorsPage",
   components: {},
@@ -52,18 +53,19 @@ export default {
         location: "",
       },
       rooms: [],
+      url: data.url,
     };
   },
 
   methods: {
     getData() {
-      fetch("http://localhost:2000/sensors")
+      fetch(this.url+"/sensors")
         .then((response) => response.json())
         .then((data) => (this.sensors = data));
     },
 
     editSensor(id) {
-      fetch("http://localhost:2000/sensors", {
+      fetch(this.url+"/sensors", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +77,7 @@ export default {
     },
 
     deleteSensor(id) {
-      fetch("http://localhost:2000/sensors", {
+      fetch(this.url+"/sensors", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +90,7 @@ export default {
 
     addSensor() {
       console.log(this.newSensor);
-      fetch("http://localhost:2000/sensors", {
+      fetch(this.url+"/sensors", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +102,7 @@ export default {
     },
 
     getRooms() {
-      fetch("http://localhost:2000/rooms")
+      fetch(this.url+"/rooms")
         .then((response) => response.json())
         .then((data) => (this.rooms = data));
     },
