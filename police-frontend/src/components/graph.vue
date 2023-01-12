@@ -119,7 +119,7 @@ export default {
     mapData() {
       this.data.distance = this.data.map((item) => {
         if (item.distance < this.distance) {
-          return 500;
+          return 150;
         } else {
           return 0;
         }
