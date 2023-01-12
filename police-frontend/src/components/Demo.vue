@@ -7,6 +7,7 @@
 </template>
   
 <script>
+import data from "../data.json";
 export default {
   name: 'CreatePost',
   data(){
@@ -14,12 +15,14 @@ export default {
       formData:{
         postText:''
       },
+      url: data.url,
+
     }
   },
   methods:{
     test(){
       // cors error
-      fetch("http://127.0.0.1:2000/demo", {
+      fetch(this.url+"/demo", {
         method: "post",
         headers: {
           "Content-Type": "application/json",

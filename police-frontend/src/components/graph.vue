@@ -8,7 +8,7 @@
   
   <script>
 import Chart from "chart.js/auto";
-
+import data from "../data.json";
 export default {
   name: "GraphPage",
   components: {},
@@ -16,12 +16,14 @@ export default {
   data: function () {
     return {
       data: [],
+      url: data.url,
     };
+
   },
 
   methods: {
     getData() {
-      fetch("http://localhost.nl:2000/distance")
+      fetch(this.url+"/distance")
         .then((response) => response.json())
         .then((data) => (this.data = data))
         .then(() => this.mapData())

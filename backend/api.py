@@ -19,6 +19,9 @@ app.config['SECRET_KEY'] = 'secretkey'
 regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 db = SQLAlchemy(app)
 
+#ENVIRONMENT = 'development'
+ENVIRONMENT = 'production'
+
 
 class MeasurementModel(db.Model):
     __tablename__ = 'measurement'
@@ -410,4 +413,9 @@ api.add_resource(Situation, '/situations')
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(port=2000, debug=True)
+
+    if ENVIRONMENT == 'production':
+        app.run(host = '192.168.178.69', port = 2000, debug=True)
+    else:
+        app.run(port=2000, debug=True)
+

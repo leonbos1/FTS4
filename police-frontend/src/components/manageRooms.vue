@@ -34,18 +34,19 @@ export default {
       newRoom: {
         location: "",
       },
+      url: "http://ronleon.nl:2000",
     };
   },
 
   methods: {
     getData() {
-      fetch("http://localhost:2000/rooms")
+      fetch(this.url+"/rooms")
         .then((response) => response.json())
         .then((data) => (this.rooms = data));
     },
 
     editRoom(id) {
-      fetch("http://localhost:2000/rooms", {
+      fetch(this.url+"/rooms", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +58,7 @@ export default {
     },
 
     deleteRoom(id) {
-      fetch("http://localhost:2000/rooms", {
+      fetch(this.url + "/rooms", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +70,7 @@ export default {
     },
 
     addRoom() {
-      fetch("http://localhost:2000/rooms", {
+      fetch(this.url+"/rooms", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

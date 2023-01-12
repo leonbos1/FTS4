@@ -57,6 +57,9 @@
 </template>
 
 <script>
+
+import data from "../data.json";
+
 export default {
   name: "ControlPanelPage",
   components: {},
@@ -70,7 +73,7 @@ export default {
     return {
       data: [],
       dataGenerator: false,
-      url: "http://127.0.0.1:2000",
+      url: data.url,
       newSituation: {
         location: "",
       },
@@ -97,7 +100,7 @@ export default {
     },
 
     turnOffSituations() {
-      fetch("http://localhost:2000/situations", {
+      fetch(this.url+"/situations", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +114,7 @@ export default {
     },
 
     getData() {
-      fetch("http://localhost:2000/situations")
+      fetch(this.url+"/situations")
         .then((response) => response.json())
         .then((data) => (this.ongoingSituations = data))
         //.then(() => console.log(this.ongoingSituations));
@@ -148,7 +151,7 @@ export default {
         startTime: new Date().toLocaleTimeString(),
       };
 
-      fetch("http://localhost:2000/situations", {
+      fetch(this.url+"/situations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +163,7 @@ export default {
     },
 
     deleteSituation(situation_id) {
-      fetch("http://localhost:2000/situations", {
+      fetch(this.url+"/situations", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
