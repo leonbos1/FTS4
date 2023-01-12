@@ -235,6 +235,14 @@ def post_demo():
 def status():
     return 'succes', 200
 
+@app.route("/clear-cache", methods=["GET"])
+def clear_cache():
+    measurements = MeasurementModel.query.all()
+    for measurement in measurements:
+        db.session.delete(measurement)
+    db.session.commit()
+
+    return 'succes', 200
 
 class Demo(Resource):
     @marshal_with(demo_field)
